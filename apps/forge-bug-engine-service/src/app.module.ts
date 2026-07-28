@@ -11,6 +11,7 @@ import { BugModule } from './modules/bug/bug.module';
 import { BugSnapshotModule } from './modules/bug-snapshot/bug-snapshot.module';
 import { SnapshotFileModule } from './modules/snapshot-file/snapshot-file.module';
 import { TestCaseModule } from './modules/test-case/test-case.module';
+import { SubmissionModule } from './modules/submission/submission.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { TestCaseModule } from './modules/test-case/test-case.module';
     BugModule,
     BugSnapshotModule,
     SnapshotFileModule,
-    TestCaseModule
+    TestCaseModule,
+    SubmissionModule
   ],
 })
 export class AppModule {}
