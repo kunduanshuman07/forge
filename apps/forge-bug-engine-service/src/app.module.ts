@@ -9,6 +9,7 @@ import { ProjectModule } from './modules/project/project.module';
 import { AuthModule } from './auth/auth.module';
 import { BugModule } from './modules/bug/bug.module';
 import { BugSnapshotModule } from './modules/bug-snapshot/bug-snapshot.module';
+import { SnapshotFileModule } from './modules/snapshot-file/snapshot-file.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { BugSnapshotModule } from './modules/bug-snapshot/bug-snapshot.module';
     ProjectModule,
     AuthModule,
     BugModule,
-    BugSnapshotModule
+    BugSnapshotModule,
+    SnapshotFileModule
   ],
 })
 export class AppModule {}
