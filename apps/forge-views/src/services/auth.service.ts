@@ -1,7 +1,7 @@
 // src/services/auth.service.ts
 
-import { api } from "@/lib/axios";
 
+import { authApi } from "@/lib/api";
 import type {
   ApiResponse,
   AuthPayload,
@@ -12,26 +12,26 @@ import type {
 
 export const authService = {
   signup(data: SignupDto) {
-    return api.post<ApiResponse<AuthPayload>>("/forge-auth/auth/signup", data);
+    return authApi.post<ApiResponse<AuthPayload>>("/forge-auth/auth/signup", data);
   },
 
   login(data: LoginDto) {
-    return api.post<ApiResponse<AuthPayload>>("/forge-auth/auth/login", data);
+    return authApi.post<ApiResponse<AuthPayload>>("/forge-auth/auth/login", data);
   },
 
   me() {
-    return api.get<ApiResponse<User>>("/forge-auth/auth/me");
+    return authApi.get<ApiResponse<User>>("/forge-auth/auth/me");
   },
 
   refresh() {
-    return api.post<ApiResponse<AuthPayload>>("/forge-auth/auth/refresh");
+    return authApi.post<ApiResponse<AuthPayload>>("/forge-auth/auth/refresh");
   },
 
   logout() {
-    return api.post<ApiResponse<void>>("/forge-auth/auth/logout");
+    return authApi.post<ApiResponse<void>>("/forge-auth/auth/logout");
   },
 
   verifyEmail(token: string) {
-    return api.get<ApiResponse<void>>(`/forge-auth/auth/verify-email/${token}`);
+    return authApi.get<ApiResponse<void>>(`/forge-auth/auth/verify-email/${token}`);
   },
 };

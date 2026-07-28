@@ -3,6 +3,8 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 
+import { SubmissionStatus } from '@prisma/client';
+
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateSubmissionDto } from '../../modules/submission/dto/create-submission.dto';
 
@@ -19,29 +21,58 @@ export class SubmissionWorkflow {
         });
 
         if (!bug) {
-            throw new NotFoundException('Bug not found.');
-        }
-
-        const snapshot = await prisma.bugSnapshot.findFirst({
-            where: {
-                bugId: bug.id,
-                isLatest: true,
-            },
-        });
-
-        if (!snapshot) {
             throw new NotFoundException(
-                'Latest bug snapshot not found.',
-            );
-        }
-
-        if (snapshot.bugId !== bug.id) {
-            throw new BadRequestException(
-                'Snapshot does not belong to the specified bug.',
+                'Bug not found.',
             );
         }
 
         return prisma.$transaction(async (tx) => {
+            const existingSubmission =
+                await tx.submission.findFirst({
+                    where: {
+                        userId,
+                        bugId: bug.id,
+                        status: {
+                            in: [
+                                SubmissionStatus.PENDING,
+                                SubmissionStatus.RUNNING,
+                            ],
+                        },
+                    },
+                    orderBy: {
+                        createdAt: 'desc',
+                    },
+                });
+
+            if (existingSubmission) {
+                return {
+                    message:
+                        'Existing submission loaded successfully.',
+                    submission: existingSubmission,
+                    filesCopied: 0,
+                };
+            }
+
+            const snapshot =
+                await tx.bugSnapshot.findFirst({
+                    where: {
+                        bugId: bug.id,
+                        isLatest: true,
+                    },
+                });
+
+            if (!snapshot) {
+                throw new NotFoundException(
+                    'Latest bug snapshot not found.',
+                );
+            }
+
+            if (snapshot.bugId !== bug.id) {
+                throw new BadRequestException(
+                    'Snapshot does not belong to the specified bug.',
+                );
+            }
+
             const submission =
                 await tx.submission.create({
                     data: {
@@ -58,7 +89,7 @@ export class SubmissionWorkflow {
                     },
                 });
 
-            if (snapshotFiles.length) {
+            if (snapshotFiles.length > 0) {
                 await tx.submissionFile.createMany({
                     data: snapshotFiles.map((file) => ({
                         submissionId: submission.id,

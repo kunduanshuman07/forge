@@ -17,7 +17,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1/forge-bug-engine/');
 
   app.enableCors({
-    origin: '*',
+    origin: true,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });

@@ -1,23 +1,29 @@
-import { Hammer } from "lucide-react";
+import { ContinueChallenge } from "@/components/dashboard/ContinueChallenge";
+import { ProjectsSection } from "@/components/dashboard/ProjectSection";
+import { RecentActivity } from "@/components/dashboard/RecentActivity";
 
 export default function DashboardPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="text-center">
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10">
-          <Hammer className="h-10 w-10 text-primary" />
+    <section className="px-8 py-12">
+      <div className="mx-auto max-w-7xl">
+        <div className="space-y-4">
+          <p className="text-orange-400">
+            Welcome Back
+          </p>
+
+          <h1 className="font-['Space_Grotesk'] text-6xl font-bold tracking-tight">
+            What are we building today?
+          </h1>
+
+          <p className="max-w-2xl text-lg text-zinc-400">
+            Continue solving production-grade engineering problems
+            and master real software systems.
+          </p>
         </div>
-
-        <h1 className="text-4xl font-bold tracking-tight">
-          Forge Dashboard
-        </h1>
-
-        <p className="mt-4 max-w-md text-muted-foreground">
-          Welcome to Forge. Your dashboard is currently under construction.
-          Soon you'll be able to solve production-grade bugs, track your
-          progress, and manage projects from here.
-        </p>
-    </div>
-    </main>
+        <ContinueChallenge />
+        <ProjectsSection />
+        <RecentActivity />
+      </div>
+    </section>
   );
 }

@@ -1,9 +1,16 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { type ReactNode } from "react";
 
 import AppLoader from "@/components/common/AppLoader";
 import { useAuthStore } from "@/stores/auth.store";
 
-export default function ProtectedRoute() {
+interface ProtectedRouteProps {
+  children?: ReactNode;
+}
+
+export default function ProtectedRoute({
+  children,
+}: ProtectedRouteProps) {
   const {
     isAuthenticated,
     isInitializing,
@@ -18,5 +25,5 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return children ? <>{children}</> : <Outlet />;
 }
