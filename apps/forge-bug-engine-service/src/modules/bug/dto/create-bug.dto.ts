@@ -1,5 +1,6 @@
 import { Difficulty } from '@prisma/client';
 import {
+    IsArray,
     IsBoolean,
     IsEnum,
     IsInt,
@@ -24,8 +25,9 @@ export class CreateBugDto {
     description?: string;
 
     @IsOptional()
-    @IsJSON()
-    learningObjectives?: string;
+    @IsArray()
+    @IsString({ each: true })
+    learningObjectives?: string[];
 
     @IsOptional()
     @IsString()

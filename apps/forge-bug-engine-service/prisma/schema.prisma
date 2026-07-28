@@ -272,11 +272,24 @@ model SubmissionFile {
   id String @id @default(cuid())
 
   submissionId String
-  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 
   path String
 
+  name String
+  extension String?
+
+  language ProgrammingLanguage?
+  type FileType
+
   content String @db.Text
+
+  size Int?
+
+  isEditable Boolean @default(true)
+  isHidden Boolean @default(false)
+
+  displayOrder Int
 
   createdAt DateTime @default(now())
 
