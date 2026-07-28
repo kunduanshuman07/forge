@@ -1,0 +1,339 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum ProgrammingLanguage {
+  TYPESCRIPT
+  JAVASCRIPT
+  PYTHON
+  JAVA
+  GO
+  RUST
+}
+
+enum Framework {
+  NESTJS
+  EXPRESS
+  FASTIFY
+  NEXTJS
+  REACT
+  SPRING
+}
+
+enum Runtime {
+  NODE
+  PYTHON
+  JAVA
+  GO
+}
+
+enum TestCaseType {
+  UNIT
+  INTEGRATION
+  E2E
+}
+
+enum SubmissionStatus {
+  PENDING
+  RUNNING
+  PASSED
+  FAILED
+  ERROR
+}
+
+enum FileType {
+  SOURCE
+  CONFIG
+  TEST
+  DOCUMENTATION
+  ASSET
+  OTHER
+}
+
+model Project {
+  id               String  @id @default(cuid())
+  slug             String  @unique
+  title            String
+  shortDescription String?
+  description      String? @db.Text
+
+  category String
+
+  language   ProgrammingLanguage
+  framework  Framework
+  difficulty Difficulty
+
+  estimatedHours Int?
+
+  thumbnailUrl String?
+  bannerUrl    String?
+  iconUrl      String?
+
+  displayOrder Int
+  isPublished  Boolean @default(false)
+
+  bugs     Bug[]
+  progress ProjectProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([displayOrder])
+  @@index([category])
+  @@index([difficulty])
+}
+
+model Bug {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  slug        String
+  title       String
+  description String? @db.Text
+
+  learningObjectives Json?
+  expectedOutcome    String? @db.Text
+
+  difficulty Difficulty
+
+  estimatedMinutes Int?
+  points           Int  @default(0)
+
+  displayOrder Int
+  isPublished  Boolean @default(false)
+
+  snapshots   BugSnapshot[]
+  tags        BugTag[]
+  submissions Submission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, slug])
+  @@unique([projectId, displayOrder])
+  @@index([projectId])
+}
+
+model BugSnapshot {
+  id String @id @default(cuid())
+
+  bugId String
+  bug   Bug    @relation(fields: [bugId], references: [id], onDelete: Cascade)
+
+  version Int
+
+  runtime Runtime
+
+  dockerImage String?
+  nodeVersion String?
+
+  installCommand String?
+  buildCommand   String?
+  startCommand   String?
+  testCommand    String?
+
+  entryPoint String?
+
+  memoryLimitMb Int?
+  cpuLimit      Float?
+
+  isLatest Boolean @default(false)
+
+  files       SnapshotFile[]
+  testCases   TestCase[]
+  submissions Submission[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([bugId, version])
+  @@index([bugId])
+}
+
+model SnapshotFile {
+  id String @id @default(cuid())
+
+  snapshotId String
+  snapshot   BugSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  path      String
+  name      String
+  extension String?
+
+  language ProgrammingLanguage?
+  type     FileType
+
+  content String @db.Text
+
+  size Int?
+
+  isEditable Boolean @default(true)
+  isHidden   Boolean @default(false)
+
+  displayOrder Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([snapshotId, path])
+  @@index([snapshotId])
+}
+
+model TestCase {
+  id String @id @default(cuid())
+
+  snapshotId String
+  snapshot   BugSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String? @db.Text
+
+  type TestCaseType
+
+  command        String
+  expectedOutput String? @db.Text
+
+  timeoutSeconds Int @default(30)
+  points         Int @default(0)
+
+  displayOrder Int
+
+  submissionResults SubmissionTestResult[]
+
+  createdAt DateTime @default(now())
+
+  @@index([snapshotId])
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+
+  bugs BugTag[]
+
+  createdAt DateTime @default(now())
+}
+
+model BugTag {
+  bugId String
+  tagId String
+
+  bug Bug @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([bugId, tagId])
+  @@index([tagId])
+}
+
+model Submission {
+  id String @id @default(cuid())
+
+  userId String
+
+  bugId String
+  bug   Bug    @relation(fields: [bugId], references: [id], onDelete: Cascade)
+
+  snapshotId String
+  snapshot   BugSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  status SubmissionStatus @default(PENDING)
+
+  score Int @default(0)
+
+  executionTimeMs Int?
+  memoryUsedMb    Float?
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  files   SubmissionFile[]
+  results SubmissionTestResult[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([bugId])
+  @@index([snapshotId])
+}
+
+model SubmissionFile {
+  id String @id @default(cuid())
+
+  submissionId String
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  path String
+
+  name String
+  extension String?
+
+  language ProgrammingLanguage?
+  type FileType
+
+  content String @db.Text
+
+  size Int?
+
+  isEditable Boolean @default(true)
+  isHidden Boolean @default(false)
+
+  displayOrder Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([submissionId, path])
+}
+
+model SubmissionTestResult {
+  id String @id @default(cuid())
+
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  testCaseId String
+  testCase   TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+
+  passed Boolean
+
+  executionTimeMs Int?
+
+  output String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@unique([submissionId, testCaseId])
+}
+
+model ProjectProgress {
+  id String @id @default(cuid())
+
+  userId String
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  completedBugs        Int   @default(0)
+  completionPercentage Float @default(0)
+
+  lastCompletedBugId String?
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+}
