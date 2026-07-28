@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { BugModule } from './modules/bug/bug.module';
 import { BugSnapshotModule } from './modules/bug-snapshot/bug-snapshot.module';
 import { SnapshotFileModule } from './modules/snapshot-file/snapshot-file.module';
+import { TestCaseModule } from './modules/test-case/test-case.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { SnapshotFileModule } from './modules/snapshot-file/snapshot-file.module
     AuthModule,
     BugModule,
     BugSnapshotModule,
-    SnapshotFileModule
+    SnapshotFileModule,
+    TestCaseModule
   ],
 })
 export class AppModule {}
