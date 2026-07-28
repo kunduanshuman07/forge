@@ -1,0 +1,23 @@
+import { projectApi } from "@/lib/api";
+import type {
+    ApiResponse,
+} from "@/types/auth.types";
+
+import type {
+    Project,
+    ProjectDetails,
+} from "@/types/project.types";
+
+export const projectService = {
+
+    getProjects() {
+        return projectApi.get<ApiResponse<Project[]>>("/forge-bug-engine/projects");
+    },
+
+    getProject(projectId: string) {
+        return projectApi.get<ApiResponse<ProjectDetails>>(
+            `/forge-bug-engine/projects/${projectId}`,
+        );
+    },
+
+};

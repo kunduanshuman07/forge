@@ -1,11 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
+
 import LandingPage from "@/pages/Landing/LandingPage";
 import LoginPage from "@/pages/Auth/LoginPage";
+import SignupPage from "@/pages/Auth/SignupPage";
 import DashboardPage from "@/pages/Dashboard/DashboardPage";
 import NotFoundPage from "@/pages/NotFoundPage";
-import SignupPage from "@/pages/Auth/SignupPage";
+
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
+
+import { AppLayout } from "@/components/layout/AppLayout";
+import ProjectsPage from "@/pages/Projects/ProjectsPage";
+import ProjectDetailsPage from "@/pages/Projects/ProjectDetailsPage";
+import BugDetailsPage from "@/pages/Bug/BugDetailsPage";
+import WorkspacePage from "@/pages/Workspace/WorkspacePage";
 
 export const router = createBrowserRouter([
   {
@@ -28,11 +36,31 @@ export const router = createBrowserRouter([
   },
 
   {
-    element: <ProtectedRoute />,
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/dashboard",
         element: <DashboardPage />,
+      },
+      {
+        path: "/projects",
+        element: <ProjectsPage />,
+      },
+      {
+        path: "/projects/:projectId",
+        element: <ProjectDetailsPage />,
+      },
+      {
+        path: "/bugs/:bugId",
+        element: <BugDetailsPage />,
+      },
+      {
+        path: "/workspace",
+        element: <WorkspacePage />,
       },
     ],
   },
