@@ -23,7 +23,9 @@ export class ExecutionService {
         submissionId: string,
         user: any,
     ) {
-        const submission = await this.loadSubmission(submissionId);
+        const submission = await this.loadSubmission(
+            submissionId,
+        );
 
         if (!submission) {
             throw new NotFoundException(
@@ -70,15 +72,25 @@ export class ExecutionService {
                     completedAt: new Date(),
                 });
 
-                return {
-                    submission: await this.loadSubmission(
+                const updatedSubmission =
+                    await this.loadSubmission(
                         submission.id,
-                    ),
-                    step: 'INSTALL',
-                    installResult,
+                    );
+
+                return {
+                    data: {
+                        submission: updatedSubmission,
+                        step: 'INSTALL',
+                        installResult,
+                        executionTimeMs:
+                            installResult.executionTimeMs,
+                    }
                 };
             }
 
+            /**
+             * BUILD
+             */
             const buildResult = await this.executeStep(
                 'BUILD',
                 submission.snapshot.buildCommand,
@@ -86,31 +98,45 @@ export class ExecutionService {
             );
 
             if (buildResult.exitCode !== 0) {
-                await this.updateSubmissionStatus(submission.id, {
-                    status: SubmissionStatus.FAILED,
-                    executionTimeMs:
-                        installResult.executionTimeMs +
-                        buildResult.executionTimeMs,
-                    completedAt: new Date(),
-                });
+                const totalExecutionTime =
+                    installResult.executionTimeMs +
+                    buildResult.executionTimeMs;
+
+                await this.updateSubmissionStatus(
+                    submission.id,
+                    {
+                        status: SubmissionStatus.FAILED,
+                        executionTimeMs:
+                            totalExecutionTime,
+                        completedAt: new Date(),
+                    },
+                );
+
+                const updatedSubmission =
+                    await this.loadSubmission(
+                        submission.id,
+                    );
 
                 return {
-                    submission: await this.loadSubmission(
-                        submission.id,
-                    ),
-                    step: 'BUILD',
-                    installResult,
-                    buildResult,
+                    data: {
+                        submission: updatedSubmission,
+                        step: 'BUILD',
+                        installResult,
+                        buildResult,
+                        executionTimeMs:
+                            totalExecutionTime,
+                    }
                 };
             }
 
             /**
- * Execute test cases
- */
-            const testResults = await this.executeTestCases(
-                submission,
-                workspacePath,
-            );
+             * Execute test cases
+             */
+            const testResults =
+                await this.executeTestCases(
+                    submission,
+                    workspacePath,
+                );
 
             /**
              * Persist test results
@@ -131,17 +157,25 @@ export class ExecutionService {
                 0,
             );
 
+            /**
+             * Total execution time
+             */
             const totalExecutionTime =
                 installResult.executionTimeMs +
                 buildResult.executionTimeMs +
                 testResults.reduce(
                     (time, { result }) =>
-                        time + result.executionTimeMs,
+                        time +
+                        result.executionTimeMs,
                     0,
                 );
 
+            /**
+             * Passed?
+             */
             const passed = testResults.every(
-                ({ result }) => result.exitCode === 0,
+                ({ result }) =>
+                    result.exitCode === 0,
             );
 
             /**
@@ -159,6 +193,9 @@ export class ExecutionService {
                 },
             );
 
+            /**
+             * Save score
+             */
             await this.prisma.submission.update({
                 where: {
                     id: submission.id,
@@ -169,20 +206,36 @@ export class ExecutionService {
             });
 
             /**
+             * Reload updated submission
+             */
+            const updatedSubmission =
+                await this.loadSubmission(
+                    submission.id,
+                );
+
+            /**
              * Return execution summary
              */
             return {
-                step: 'TEST',
-                installResult,
-                buildResult,
-                testResults,
-                score: totalScore,
+                data: {
+                    submission: updatedSubmission,
+                    step: 'TEST',
+                    installResult,
+                    buildResult,
+                    testResults,
+                    score: totalScore,
+                    executionTimeMs:
+                        totalExecutionTime,
+                }
             };
         } catch (error) {
-            await this.updateSubmissionStatus(submission.id, {
-                status: SubmissionStatus.FAILED,
-                completedAt: new Date(),
-            });
+            await this.updateSubmissionStatus(
+                submission.id,
+                {
+                    status: SubmissionStatus.FAILED,
+                    completedAt: new Date(),
+                },
+            );
 
             throw error;
         }
