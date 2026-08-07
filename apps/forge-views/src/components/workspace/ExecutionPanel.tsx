@@ -9,6 +9,8 @@ import type { ExecutionResponse } from "@/types/execution.types";
 
 import { ExecutionSummary } from "./ExecutionSummary";
 import { ExecutionStage } from "./ExecutionStage";
+import { TestResults } from "./TestResults";
+import { ExecutionTimeline } from "./ExecutionTimeline";
 
 interface ExecutionPanelProps {
     result?: ExecutionResponse;
@@ -27,8 +29,8 @@ export function ExecutionPanel({
     return (
         <div
             className={`border-t border-white/10 bg-[#090909] ${isFocused
-                    ? "flex h-full flex-col"
-                    : "h-80"
+                ? "flex h-full flex-col"
+                : "h-80"
                 }`}
         >
             <div className="flex items-center justify-between border-b border-white/10 px-6 py-3">
@@ -95,6 +97,7 @@ export function ExecutionPanel({
 
                 {isExecuting && (
                     <div className="space-y-5">
+
                         <div className="flex items-center gap-3">
                             <Loader2
                                 className="animate-spin text-blue-500"
@@ -106,15 +109,12 @@ export function ExecutionPanel({
                             </span>
                         </div>
 
-                        <div className="space-y-3 rounded-lg border border-white/10 bg-[#111111] p-5 text-white">
-                            <p>✓ Saving latest files</p>
+                        <ExecutionTimeline
+                            currentStep={
+                                result?.step ?? "INSTALL"
+                            }
+                        />
 
-                            <p>⏳ Installing dependencies</p>
-
-                            <p>⏳ Building project</p>
-
-                            <p>⏳ Running test cases</p>
-                        </div>
                     </div>
                 )}
 
@@ -138,7 +138,9 @@ export function ExecutionPanel({
                             result={result.buildResult}
                         />
 
-                        {/* TestResults component will go here */}
+                        <TestResults
+                            tests={result.testResults}
+                        />
                     </div>
                 )}
             </div>
