@@ -5,7 +5,8 @@ import {
   FolderKanban,
   LayoutDashboard,
   Search,
-  History
+  History,
+  ShieldCheck
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,15 @@ export function AppNavbar() {
       icon: History,
       href: "/submissions",
     },
+    ...(user?.role === "ADMIN"
+      ? [
+        {
+          name: "Admin",
+          icon: ShieldCheck,
+          href: "/admin",
+        },
+      ]
+      : []),
   ];
 
   return (
@@ -78,8 +88,8 @@ export function AppNavbar() {
                   key={item.href}
                   onClick={() => navigate(item.href)}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm transition-all ${active
-                      ? "bg-orange-500/15 text-orange-400"
-                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                    ? "bg-orange-500/15 text-orange-400"
+                    : "text-zinc-400 hover:bg-white/5 hover:text-white"
                     }`}
                 >
                   <Icon size={17} />
@@ -120,7 +130,7 @@ export function AppNavbar() {
                 </p>
 
                 <p className="text-xs text-zinc-500">
-                  Engineer
+                  {user?.role === "ADMIN" ? "Admin" : "Engineer"}
                 </p>
               </div>
 

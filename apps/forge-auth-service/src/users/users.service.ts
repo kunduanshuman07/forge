@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { UserRole } from '@prisma/client';
 
 interface CreateUserParams {
   email: string;
@@ -7,6 +8,7 @@ interface CreateUserParams {
   passwordHash: string;
   firstName?: string;
   lastName?: string;
+  role: UserRole;
 }
 
 @Injectable()

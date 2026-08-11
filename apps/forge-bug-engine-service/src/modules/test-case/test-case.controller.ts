@@ -7,23 +7,27 @@ import {
     Patch,
     Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 
 import { CreateTestCaseDto } from './dto/create-test-case.dto';
 import { TestCaseQueryDto } from './dto/test-case-query.dto';
 import { UpdateTestCaseDto } from './dto/update-test-case.dto';
 import { TestCaseService } from './test-case.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
-@Controller({
-    path: 'test-cases',
-    version: '1',
-})
+@Controller('test-cases')
 export class TestCaseController {
     constructor(
         private readonly testCaseService: TestCaseService,
     ) { }
 
     @Post(':snapshotId')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     create(
         @Param('snapshotId') snapshotId: string,
         @Body() createTestCaseDto: CreateTestCaseDto,
@@ -45,6 +49,8 @@ export class TestCaseController {
     }
 
     @Patch(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     update(
         @Param('id') id: string,
         @Body() updateTestCaseDto: UpdateTestCaseDto,
@@ -56,6 +62,8 @@ export class TestCaseController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     remove(@Param('id') id: string) {
         return this.testCaseService.remove(id);
     }

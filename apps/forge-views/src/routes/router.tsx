@@ -16,6 +16,11 @@ import BugDetailsPage from "@/pages/Bug/BugDetailsPage";
 import WorkspacePage from "@/pages/Workspace/WorkspacePage";
 import SubmissionsPage from "@/pages/Submissions/SubmissionsPage";
 import SubmissionDetailsPage from "@/pages/Submissions/SubmissionDetailsPage";
+import AdminDashboardPage from "@/pages/Admin/AdminDashboardPage";
+import AdminProjectsPage from "@/pages/Admin/AdminProjectsPage";
+import AdminRoute from "./AdminRoute";
+import AdminProjectDetailsPage from "@/pages/Admin/AdminProjectDetailPage";
+import AdminBugDetailsPage from "@/pages/Admin/AdminBugDetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -71,6 +76,27 @@ export const router = createBrowserRouter([
       {
         path: "/submissions/:submissionId",
         element: <SubmissionDetailsPage />,
+      },
+      {
+        element: <AdminRoute />,
+        children: [
+          {
+            path: "/admin",
+            element: <AdminDashboardPage />,
+          },
+          {
+            path: "/admin/projects",
+            element: <AdminProjectsPage />,
+          },
+          {
+            path: "/admin/projects/:projectId",
+            element: <AdminProjectDetailsPage />,
+          },
+          {
+            path: "/admin/bugs/:bugId",
+            element: <AdminBugDetailsPage />,
+          },
+        ],
       },
     ],
   },

@@ -33,27 +33,41 @@ export class SubmissionController {
 
     @Get()
     findAll(
+        @CurrentUser() user: any,
         @Query() query: SubmissionQueryDto,
     ) {
-        return this.submissionService.findAll(query);
+        return this.submissionService.findAll(
+            user.userId,
+            query,
+        );
     }
 
     @Get(':id')
     findOne(
+        @CurrentUser() user: any,
         @Param('id') id: string,
     ) {
-        return this.submissionService.findOne(id);
+        return this.submissionService.findOne(
+            id,
+            user.userId,
+        );
     }
 
     @Get(':submissionId/files')
     findFiles(
+        @CurrentUser() user: any,
         @Param('submissionId') submissionId: string,
     ) {
-        return this.submissionService.findFiles(submissionId);
+        return this.submissionService.findFiles(
+            submissionId,
+            user.userId,
+        );
     }
 
     @Patch(':submissionId/files/:fileId')
     updateFile(
+        @CurrentUser() user: any,
+
         @Param('submissionId') submissionId: string,
 
         @Param('fileId') fileId: string,
@@ -63,6 +77,7 @@ export class SubmissionController {
         return this.submissionService.updateFile(
             submissionId,
             fileId,
+            user.userId,
             dto,
         );
     }

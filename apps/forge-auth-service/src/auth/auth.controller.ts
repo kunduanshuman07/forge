@@ -1,7 +1,6 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignupDto } from './dto/signup.dto';
 import { SuccessResponse } from '../common/responses/success.response';
 import { Get } from '@nestjs/common';
@@ -9,6 +8,9 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GetCurrentUser } from './decorators/get-current-user.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { UserRole } from '@prisma/client';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -84,5 +86,14 @@ export class AuthController {
       message: 'Email verified successfully.',
       data: result,
     });
+  }
+
+  @Get('admin-test')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  adminTest() {
+    return {
+      message: 'Admin access granted.',
+    };
   }
 }

@@ -25,6 +25,7 @@ export interface Bug {
 
     createdAt: string;
     updatedAt: string;
+    isPublished: boolean;
 }
 
 export interface Pagination {
@@ -37,4 +38,22 @@ export interface Pagination {
 export interface PaginatedResponse<T> {
     data: T[];
     pagination: Pagination;
+}
+
+export interface BugSnapshot {
+    id: string;
+
+    bugId: string;
+
+    name?: string | null;
+
+    version?: string | null;
+
+    description?: string | null;
+
+    isActive?: boolean;
+
+    createdAt: string;
+
+    updatedAt: string;
 }

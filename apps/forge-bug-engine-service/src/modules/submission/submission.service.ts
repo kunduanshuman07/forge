@@ -26,36 +26,40 @@ export class SubmissionService {
         );
     }
 
-    async findAll(query: SubmissionQueryDto) {
+    async findAll(
+        currentUserId: string,
+        query: SubmissionQueryDto,
+    ) {
         const {
-            userId,
             bugId,
             page = 1,
             limit = 10,
         } = query;
 
         const where = {
-            ...(userId && { userId }),
+            userId: currentUserId,
             ...(bugId && { bugId }),
         };
 
-        const [data, total] = await this.prisma.$transaction([
-            this.prisma.submission.findMany({
-                where,
-                skip: (page - 1) * limit,
-                take: limit,
-                include: {
-                    bug: true,
-                    snapshot: true,
-                },
-                orderBy: {
-                    startedAt: 'desc',
-                },
-            }),
-            this.prisma.submission.count({
-                where,
-            }),
-        ]);
+        const [data, total] =
+            await this.prisma.$transaction([
+                this.prisma.submission.findMany({
+                    where,
+                    skip: (page - 1) * limit,
+                    take: limit,
+                    include: {
+                        bug: true,
+                        snapshot: true,
+                    },
+                    orderBy: {
+                        startedAt: 'desc',
+                    },
+                }),
+
+                this.prisma.submission.count({
+                    where,
+                }),
+            ]);
 
         return {
             data,
@@ -63,31 +67,38 @@ export class SubmissionService {
                 total,
                 page,
                 limit,
-                totalPages: Math.ceil(total / limit),
+                totalPages: Math.ceil(
+                    total / limit,
+                ),
             },
         };
     }
 
-    async findOne(id: string) {
-        const submission = await this.prisma.submission.findUnique({
-            where: {
-                id,
-            },
-            include: {
-                bug: true,
-                snapshot: true,
-                files: {
-                    orderBy: {
-                        path: 'asc',
+    async findOne(
+        id: string,
+        currentUserId: string,
+    ) {
+        const submission =
+            await this.prisma.submission.findFirst({
+                where: {
+                    id,
+                    userId: currentUserId,
+                },
+                include: {
+                    bug: true,
+                    snapshot: true,
+                    files: {
+                        orderBy: {
+                            path: 'asc',
+                        },
+                    },
+                    results: {
+                        orderBy: {
+                            createdAt: 'asc',
+                        },
                     },
                 },
-                results: {
-                    orderBy: {
-                        createdAt: 'asc',
-                    },
-                },
-            },
-        });
+            });
 
         if (!submission) {
             throw new NotFoundException(
@@ -98,11 +109,15 @@ export class SubmissionService {
         return submission;
     }
 
-    async findFiles(submissionId: string) {
+    async findFiles(
+        submissionId: string,
+        currentUserId: string,
+    ) {
         const submission =
-            await this.prisma.submission.findUnique({
+            await this.prisma.submission.findFirst({
                 where: {
                     id: submissionId,
+                    userId: currentUserId,
                 },
                 select: {
                     id: true,
@@ -133,6 +148,7 @@ export class SubmissionService {
     async updateFile(
         submissionId: string,
         fileId: string,
+        currentUserId: string,
         dto: UpdateSubmissionFileDto,
     ) {
         const file =
@@ -140,6 +156,10 @@ export class SubmissionService {
                 where: {
                     id: fileId,
                     submissionId,
+
+                    submission: {
+                        userId: currentUserId,
+                    },
                 },
             });
 

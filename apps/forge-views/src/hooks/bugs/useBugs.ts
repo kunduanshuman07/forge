@@ -14,7 +14,7 @@ export function useBugs(projectId: string) {
     });
 }
 
-export function useBug(bugId: string) {
+export function useBug(bugId?: string) {
     return useQuery({
         queryKey: ["bug", bugId],
         enabled: !!bugId,

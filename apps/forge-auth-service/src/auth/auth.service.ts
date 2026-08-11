@@ -9,8 +9,8 @@ import { randomBytes } from 'crypto';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ConfigService } from '@nestjs/config';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -45,9 +45,10 @@ export class AuthService {
             passwordHash,
             firstName: signupDto.firstName,
             lastName: signupDto.lastName,
+            role: UserRole.ENGINEER,
         });
 
-        const tokens = await this.generateTokens(user.id, user.email);
+        const tokens = await this.generateTokens(user.id, user.email, user.role);
 
         const refreshTokenHash = await bcrypt.hash(tokens.refreshToken, 12);
 
@@ -75,6 +76,7 @@ export class AuthService {
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                role: user.role,
             },
             ...tokens,
         };
@@ -98,7 +100,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials.');
         }
 
-        const tokens = await this.generateTokens(user.id, user.email);
+        const tokens = await this.generateTokens(user.id, user.email, user.role);
 
         const refreshTokenHash = await bcrypt.hash(
             tokens.refreshToken,
@@ -117,6 +119,7 @@ export class AuthService {
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                role: user.role,
             },
             ...tokens,
         };
@@ -146,6 +149,7 @@ export class AuthService {
         const tokens = await this.generateTokens(
             user.id,
             user.email,
+            user.role,
         );
 
         const hash = await bcrypt.hash(
@@ -173,10 +177,12 @@ export class AuthService {
     private async generateTokens(
         userId: string,
         email: string,
+        role: UserRole,
     ) {
         const payload = {
             sub: userId,
             email,
+            role
         };
 
         const accessToken = await this.jwtService.signAsync(payload, {

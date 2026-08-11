@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ENGINEER
+  ADMIN
+}
+
 model User {
   id                      String   @id @default(uuid())
 
@@ -21,6 +26,8 @@ model User {
 
   firstName               String?
   lastName                String?
+
+  role                    UserRole @default(ENGINEER)
 
   isEmailVerified         Boolean  @default(false)
   isActive                Boolean  @default(true)

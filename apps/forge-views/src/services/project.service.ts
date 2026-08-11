@@ -15,7 +15,7 @@ export const projectService = {
     },
 
     getProject(projectId: string) {
-        return projectApi.get<ApiResponse<ProjectDetails>>(
+        return projectApi.get<ProjectDetails>(
             `/forge-bug-engine/projects/${projectId}`,
         );
     },

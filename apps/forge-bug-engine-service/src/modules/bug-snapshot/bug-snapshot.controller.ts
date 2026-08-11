@@ -7,12 +7,17 @@ import {
     Patch,
     Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BugSnapshotService } from './bug-snapshot.service';
 import { CreateBugSnapshotDto } from './dto/create-bug-snapshot.dto';
 import { BugSnapshotQueryDto } from './dto/bug-snapshot-query.dto';
 import { UpdateBugSnapshotDto } from './dto/update-bug-snapshot.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Bug Snapshots')
 @Controller('bug-snapshots')
@@ -22,6 +27,8 @@ export class BugSnapshotController {
     ) { }
 
     @Post(':bugId')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     create(
         @Param('bugId') bugId: string,
         @Body() createBugSnapshotDto: CreateBugSnapshotDto,
@@ -43,6 +50,8 @@ export class BugSnapshotController {
     }
 
     @Patch(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     update(
         @Param('id') id: string,
         @Body() updateBugSnapshotDto: UpdateBugSnapshotDto,
@@ -51,6 +60,8 @@ export class BugSnapshotController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     remove(@Param('id') id: string) {
         return this.bugSnapshotService.remove(id);
     }

@@ -1,5 +1,7 @@
 // src/types/auth.types.ts
 
+export type UserRole = "ENGINEER" | "ADMIN";
+
 export interface LoginDto {
     email: string;
     password: string;
@@ -20,6 +22,7 @@ export interface User {
     firstName?: string;
     lastName?: string;
     isEmailVerified: boolean;
+    role: UserRole;
 }
 
 export interface AuthPayload {
