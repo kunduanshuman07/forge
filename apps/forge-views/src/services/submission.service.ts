@@ -2,6 +2,8 @@ import { projectApi } from "@/lib/api";
 
 import type {
     CreateSubmissionResponse,
+    SubmissionDetails,
+    SubmissionHistoryResponse,
 } from "@/types/submission.types";
 
 import type {
@@ -49,5 +51,34 @@ export const submissionService = {
             );
 
         return response.data;
+    },
+
+    async getUserSubmissions(userId: string) {
+        return projectApi.get<SubmissionHistoryResponse>(
+            `/forge-bug-engine/submissions?userId=${userId}`,
+        );
+    },
+
+    async getSubmission(submissionId: string) {
+        return projectApi.get<SubmissionDetails>(
+            `/forge-bug-engine/submissions/${submissionId}`,
+        );
+    },
+
+    async getSubmissions(
+        userId: string,
+        bugId?: string,
+    ) {
+        const params = new URLSearchParams();
+
+        params.set("userId", userId);
+
+        if (bugId) {
+            params.set("bugId", bugId);
+        }
+
+        return projectApi.get(
+            `/forge-bug-engine/submissions?${params.toString()}`,
+        );
     },
 };

@@ -5,6 +5,7 @@ import {
   FolderKanban,
   LayoutDashboard,
   Search,
+  History
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,11 @@ export function AppNavbar() {
       name: "Projects",
       icon: FolderKanban,
       href: "/projects",
+    },
+    {
+      name: "Submissions",
+      icon: History,
+      href: "/submissions",
     },
   ];
 
@@ -71,11 +77,10 @@ export function AppNavbar() {
                 <button
                   key={item.href}
                   onClick={() => navigate(item.href)}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm transition-all ${
-                    active
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm transition-all ${active
                       ? "bg-orange-500/15 text-orange-400"
                       : "text-zinc-400 hover:bg-white/5 hover:text-white"
-                  }`}
+                    }`}
                 >
                   <Icon size={17} />
 

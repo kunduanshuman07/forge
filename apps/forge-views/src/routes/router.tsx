@@ -14,6 +14,8 @@ import ProjectsPage from "@/pages/Projects/ProjectsPage";
 import ProjectDetailsPage from "@/pages/Projects/ProjectDetailsPage";
 import BugDetailsPage from "@/pages/Bug/BugDetailsPage";
 import WorkspacePage from "@/pages/Workspace/WorkspacePage";
+import SubmissionsPage from "@/pages/Submissions/SubmissionsPage";
+import SubmissionDetailsPage from "@/pages/Submissions/SubmissionDetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +63,14 @@ export const router = createBrowserRouter([
       {
         path: "/workspace",
         element: <WorkspacePage />,
+      },
+      {
+        path: "/submissions",
+        element: <SubmissionsPage />,
+      },
+      {
+        path: "/submissions/:submissionId",
+        element: <SubmissionDetailsPage />,
       },
     ],
   },

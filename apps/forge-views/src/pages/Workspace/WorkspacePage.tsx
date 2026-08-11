@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-
+import {
+    History,
+    PlayCircle,
+} from "lucide-react";
 import { WorkspaceHeader } from "@/components/workspace/WorkspaceHeader";
 import { FileExplorer } from "@/components/workspace/FileExplorer";
 import { CodeEditor } from "@/components/workspace/CodeEditor";
@@ -14,9 +17,15 @@ import { useUpdateSubmissionFile } from "@/hooks/submissions/useUpdateSubmission
 import { useExecuteSubmission } from "@/hooks/execution/useExecutionSubmission";
 
 import type { ExecutionResponse } from "@/types/execution.types";
+import { BugSubmissionHistory } from "@/components/workspace/BugSubmissionHistory";
 
 export default function WorkspacePage() {
     const { state } = useLocation();
+
+    const [bottomPanelTab, setBottomPanelTab] =
+        useState<"execution" | "history">(
+            "execution",
+        );
 
     const executeSubmission = useExecuteSubmission();
 
@@ -176,18 +185,68 @@ export default function WorkspacePage() {
 
                             <CodeEditor />
 
-                            <ExecutionPanel
-                                result={executionResult}
-                                isExecuting={
-                                    executeSubmission.isPending
-                                }
-                                isFocused={false}
-                                onToggleFocus={() =>
-                                    setIsExecutionFocused(
-                                        true,
-                                    )
-                                }
-                            />
+                            <div className="flex h-80 flex-col border-t border-white/10 bg-[#090909]">
+
+                                {/* Tabs */}
+                                <div className="flex shrink-0 items-center border-b border-white/10 px-4">
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setBottomPanelTab("execution")
+                                        }
+                                        className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition ${bottomPanelTab === "execution"
+                                            ? "border-orange-500 text-white"
+                                            : "border-transparent text-zinc-500 hover:text-zinc-300"
+                                            }`}
+                                    >
+                                        <PlayCircle size={15} />
+
+                                        Execution Results
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setBottomPanelTab("history")
+                                        }
+                                        className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition ${bottomPanelTab === "history"
+                                            ? "border-orange-500 text-white"
+                                            : "border-transparent text-zinc-500 hover:text-zinc-300"
+                                            }`}
+                                    >
+                                        <History size={15} />
+
+                                        Submission History
+                                    </button>
+
+                                </div>
+
+                                {/* Content */}
+                                <div className="min-h-0 flex-1 overflow-hidden">
+
+                                    {bottomPanelTab === "execution" ? (
+                                        <ExecutionPanel
+                                            result={executionResult}
+                                            isExecuting={
+                                                executeSubmission.isPending
+                                            }
+                                            isFocused={false}
+                                            onToggleFocus={() =>
+                                                setIsExecutionFocused(true)
+                                            }
+                                        />
+                                    ) : (
+                                        <div className="h-full overflow-auto p-5">
+                                            <BugSubmissionHistory
+                                                bugId={bug.id}
+                                            />
+                                        </div>
+                                    )}
+
+                                </div>
+
+                            </div>
                         </div>
                     </>
                 )}
