@@ -1,9 +1,11 @@
 import {
     ArrowLeft,
+    AsteriskSquare,
     Bug,
     CheckCircle2,
     Clock3,
     FlaskConical,
+    FolderPlus,
     GitBranch,
     Plus,
     Settings2,
@@ -14,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useBug } from "../../hooks/bugs/useBugs";
 import { useBugSnapshots } from "@/hooks/bugs/useBugsnapshots";
+import { Button } from "@base-ui/react";
 
 type BugTab = "overview" | "snapshots";
 
@@ -231,6 +234,7 @@ export default function AdminBugDetailsPage() {
 
                 {activeTab === "snapshots" && (
                     <SnapshotSection
+                        projectId={bug.projectId}
                         bugId={bug.id}
                         snapshots={snapshots}
                         isLoading={isSnapshotsLoading}
@@ -425,6 +429,7 @@ function BugOverview({
 }
 
 function SnapshotSection({
+    projectId,
     bugId,
     snapshots,
     isLoading,
@@ -432,6 +437,7 @@ function SnapshotSection({
     onRetry,
     onCreate,
 }: {
+    projectId: string;
     bugId: string;
     snapshots: any[] | undefined;
     isLoading: boolean;
@@ -439,6 +445,7 @@ function SnapshotSection({
     onRetry: () => void;
     onCreate: () => void;
 }) {
+    const navigate = useNavigate();
     return (
         <div>
 
@@ -593,6 +600,32 @@ function SnapshotSection({
                                         className="shrink-0 rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/30 hover:text-orange-400"
                                     >
                                         Manage
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            navigate(
+                                                `/admin/projects/${projectId}/bugs/${bugId}/snapshots/${snapshot.id}/files/new`,
+                                            )
+                                        }
+                                        className="flex shrink-0 rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/30 hover:text-orange-400 mr-2"
+                                    >
+                                        <FolderPlus size={20} className="mr-2"/>
+                                        Create Snapshot Files
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            navigate(
+                                                `/admin/projects/${projectId}/bugs/${bugId}/snapshots/${snapshot.id}/test-cases/new`,
+                                            )
+                                        }
+                                        className="flex shrink-0 rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-400 transition hover:border-orange-500/30 hover:text-orange-400 mr-2"
+                                    >
+                                        <AsteriskSquare size={20} className="mr-2"/>
+                                        Create Test Cases
                                     </button>
 
                                 </div>

@@ -24,6 +24,8 @@ import AdminBugDetailsPage from "@/pages/Admin/AdminBugDetailsPage";
 import CreateProjectPage from "@/pages/Admin/CreateProjectPage";
 import CreateBugPage from "@/pages/Admin/CreateBugPage";
 import CreateBugSnapshotPage from "@/pages/Admin/CreateBugSnapshotPage";
+import CreateSnapshotFilesPage from "@/pages/Admin/CreateSnapshotFilePage";
+import CreateTestCasePage from "@/pages/Admin/CreateTestCasePage";
 
 export const router = createBrowserRouter([
   {
@@ -110,6 +112,14 @@ export const router = createBrowserRouter([
           {
             path: "/admin/projects/:projectId/bugs/:bugId/snapshots/new",
             element: <CreateBugSnapshotPage />,
+          },
+          {
+            path: "/admin/projects/:projectId/bugs/:bugId/snapshots/:snapshotId/files/new",
+            element: <CreateSnapshotFilesPage />,
+          },
+          {
+            path: "/admin/projects/:projectId/bugs/:bugId/snapshots/:snapshotId/test-cases/new",
+            element: <CreateTestCasePage />,
           },
         ],
       },
