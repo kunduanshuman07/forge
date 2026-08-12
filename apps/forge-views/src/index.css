@@ -42,3 +42,17 @@ body {
 button {
   cursor: pointer;
 }
+
+@layer components {
+  .admin-input {
+    @apply w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-orange-500/50 focus:bg-white/[0.06] focus:ring-1 focus:ring-orange-500/20;
+  }
+
+  .admin-input:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  .admin-input option {
+    @apply bg-zinc-900 text-white;
+  }
+}

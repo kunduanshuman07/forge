@@ -3,6 +3,7 @@ import type { ApiResponse } from "@/types/auth.types";
 import type {
     Bug,
     BugSnapshot,
+    CreateBugDto,
     PaginatedResponse,
 } from "@/types/bug.types";
 
@@ -18,6 +19,16 @@ export const bugService = {
             `/forge-bug-engine/bugs/${bugId}`,
         );
     },
+
+    createBug(
+        projectId: string,
+        data: CreateBugDto,
+      ) {
+        return projectApi.post<ApiResponse<Bug>>(
+          `/forge-bug-engine/bugs/${projectId}`,
+          data,
+        );
+      },
 };
 
 export const bugSnapshotService = {

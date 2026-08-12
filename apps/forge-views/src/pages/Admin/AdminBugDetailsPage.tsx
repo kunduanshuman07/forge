@@ -240,7 +240,7 @@ export default function AdminBugDetailsPage() {
                         }
                         onCreate={() =>
                             navigate(
-                                `/admin/bugs/${bug.id}/snapshots/new`,
+                                `/admin/projects/${bug.projectId}/bugs/${bug.id}/snapshots/new`,
                             )
                         }
                     />

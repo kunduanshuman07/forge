@@ -21,6 +21,9 @@ import AdminProjectsPage from "@/pages/Admin/AdminProjectsPage";
 import AdminRoute from "./AdminRoute";
 import AdminProjectDetailsPage from "@/pages/Admin/AdminProjectDetailPage";
 import AdminBugDetailsPage from "@/pages/Admin/AdminBugDetailsPage";
+import CreateProjectPage from "@/pages/Admin/CreateProjectPage";
+import CreateBugPage from "@/pages/Admin/CreateBugPage";
+import CreateBugSnapshotPage from "@/pages/Admin/CreateBugSnapshotPage";
 
 export const router = createBrowserRouter([
   {
@@ -95,6 +98,18 @@ export const router = createBrowserRouter([
           {
             path: "/admin/bugs/:bugId",
             element: <AdminBugDetailsPage />,
+          },
+          {
+            path: "/admin/projects/new",
+            element: <CreateProjectPage />,
+          },
+          {
+            path: "/admin/projects/:projectId/bugs/new",
+            element: <CreateBugPage />,
+          },
+          {
+            path: "/admin/projects/:projectId/bugs/:bugId/snapshots/new",
+            element: <CreateBugSnapshotPage />,
           },
         ],
       },

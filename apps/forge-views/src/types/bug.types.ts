@@ -57,3 +57,22 @@ export interface BugSnapshot {
 
     updatedAt: string;
 }
+
+export type Difficulty =
+  | "BEGINNER"
+  | "INTERMEDIATE"
+  | "ADVANCED"
+  | "EXPERT";
+
+export interface CreateBugDto {
+  title: string;
+  slug: string;
+  description?: string;
+  learningObjectives?: string[];
+  expectedOutcome?: string;
+  difficulty: Difficulty;
+  estimatedMinutes?: number;
+  points?: number;
+  displayOrder: number;
+  isPublished?: boolean;
+}

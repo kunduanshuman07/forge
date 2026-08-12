@@ -4,6 +4,7 @@ import type {
 } from "@/types/auth.types";
 
 import type {
+    CreateProjectDto,
     Project,
     ProjectDetails,
 } from "@/types/project.types";
@@ -17,6 +18,13 @@ export const projectService = {
     getProject(projectId: string) {
         return projectApi.get<ProjectDetails>(
             `/forge-bug-engine/projects/${projectId}`,
+        );
+    },
+
+    createProject(data: CreateProjectDto) {
+        return projectApi.post<ApiResponse<Project>>(
+            "/forge-bug-engine/projects",
+            data,
         );
     },
 

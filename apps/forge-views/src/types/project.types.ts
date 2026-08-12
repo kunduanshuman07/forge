@@ -57,3 +57,45 @@ export interface BugSummary {
 
     status: "LOCKED" | "IN_PROGRESS" | "COMPLETED";
 }
+
+
+export type ProgrammingLanguage =
+    | "JAVASCRIPT"
+    | "TYPESCRIPT"
+    | "PYTHON"
+    | "JAVA"
+    | "GO"
+    | "C"
+    | "CPP";
+
+export type Framework =
+    | "NESTJS"
+    | "EXPRESS"
+    | "REACT"
+    | "NEXTJS"
+    | "SPRING_BOOT"
+    | "DJANGO"
+    | "FASTAPI"
+    | "NONE";
+
+export type Difficulty =
+    | "BEGINNER"
+    | "INTERMEDIATE"
+    | "ADVANCED";
+
+export interface CreateProjectDto {
+    title: string;
+    slug: string;
+    shortDescription?: string;
+    description?: string;
+    category: string;
+    language: ProgrammingLanguage;
+    framework: Framework;
+    difficulty: Difficulty;
+    estimatedHours?: number;
+    thumbnailUrl?: string;
+    bannerUrl?: string;
+    iconUrl?: string;
+    displayOrder: number;
+    isPublished?: boolean;
+}
